@@ -41,3 +41,28 @@ stages:
           inputs:
             PathtoPublish: 'C:\terraform-software'
             ArtifactName: 'terraform-software'
+
+
+ # Stage 2: Get Terraform Code
+- stage: GetTerraformCode
+  displayName: "Get Terraform Code"
+  jobs:
+    - job: GetTerraformCode
+      displayName: "Get Terraform Code"
+      steps:
+        # Checkout the Terraform code from repository
+        - checkout: self
+
+        # Publish the Terraform code as an artifact for later use
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: 'C:\vsts-agent-win-x64-3.246.0\_work\1\s'
+            ArtifactName: 'terraform-code'
+        
+        # Download the Terraform code artifact for subsequent use
+        - task: DownloadBuildArtifacts@1
+          inputs:
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'terraform-code'
+            downloadPath: 'C:\'
