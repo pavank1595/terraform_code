@@ -13,6 +13,29 @@ variables:
 
 
 stages:
+# Stage 1: Install Terraform
+- stage: InstallTerraform
+  displayName: "Install Terraform"
+  jobs:
+    - job: InstallTerraform
+      displayName: "Install Terraform"
+      steps:
+        - task: TerraformInstaller@1
+          inputs:
+            terraformVersion: 'latest'
+        
+        # Copy the Terraform binaries into a shared location (caching)
+        - task: CopyFiles@2
+          inputs:
+            SourceFolder: 'C:\vsts-agent-win-x64-3.246.0\_work\_tool\terraform\1.9.8\x64'
+            Contents: '**/*'  # Copy all files in the directory
+            TargetFolder: 'C:\terraform-software'
+        
+        # Publish Terraform binary as an artifact for other stages
+        - task: PublishBuildArtifacts@1
+          inputs:
+            PathtoPublish: 'C:\terraform-software'
+            ArtifactName: 'terraform-software'
 
  # Stage 2: Get Terraform Code
 - stage: GetTerraformCode
@@ -45,17 +68,14 @@ stages:
     - job: init
       displayName: "terraform init"
       steps:
-        - task: TerraformInstaller@1
-          inputs:
-            terraformVersion: 'latest'
-        
-        - task: CopyFiles@2
-          inputs:
-            SourceFolder: 'C:\vsts-agent-win-x64-3.246.0\_work\_tool\terraform\1.9.8\x64'
-            Contents: '**/*'  # Copy all files in the directory
-            TargetFolder: 'C:\terraform-software'
 
-        # Add Terraform to PATH environment variable
+        - task: DownloadBuildArtifacts@1
+          inputs:
+            buildType: 'current'
+            artifactName: 'terraform-software'
+            downloadPath: 'C:\terraform-software'
+
+          # Add Terraform to PATH environment variable
         - powershell: |
             [System.Environment]::SetEnvironmentVariable("PATH", $env:PATH + ";C:\terraform-software", [System.EnvironmentVariableTarget]::Machine)
             echo "Updated PATH: $env:PATH"  # Optional: Print the PATH to verify it's correct
