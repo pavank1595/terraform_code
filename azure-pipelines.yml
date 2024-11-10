@@ -74,6 +74,12 @@ stages:
     - job: init
       displayName: "terraform init"
       steps:
+        - task: DownloadBuildArtifacts@1
+          inputs:
+            buildType: 'current'
+            artifactName: 'terraform-software'
+            downloadPath: 'C:\terraform-software' 
+
         - task: TerraformTaskV4@4
           inputs:
             provider: 'azurerm'
