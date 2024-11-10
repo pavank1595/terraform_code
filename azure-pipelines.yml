@@ -1,0 +1,31 @@
+trigger: none
+
+pool:
+  name: "windowspool"
+  demands:
+    - Agent.Name -equals windowsagent
+
+variables:
+  ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+  ARM_TENANT_ID: $(ARM_TENANT_ID)
+  ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+  ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+
+
+stages:
+# Stage 1: Install Terraform
+- stage: InstallTerraform
+  displayName: "Install Terraform"
+  jobs:
+    - job: InstallTerraform
+      displayName: "Install Terraform"
+      steps:
+        - task: TerraformInstaller@1
+          inputs:
+            terraformVersion: 'latest'
+        
+        - task: CopyFiles@2
+          inputs:
+            SourceFolder: 'C:\vsts-agent-win-x64-3.246.0\_work\_tool\terraform\1.9.8\x64'
+            Contents: '**/*'  # Copy all files in the directory
+            TargetFolder: 'C:\terraform-software'
