@@ -66,3 +66,21 @@ stages:
             downloadType: 'single'
             artifactName: 'terraform-code'
             downloadPath: 'C:\'
+
+# Stage 3: Run Terraform Init
+- stage: RunTerraformCommands
+  displayName: "Run Terraform Commands"
+  jobs:
+    - job: init
+      displayName: "terraform init"
+      steps:
+        - task: TerraformTaskV4@4
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            # workingDirectory: 'C:\terraform-code'  # Use the correct path where the code is now downloaded
+            backendServiceArm: 'devops-azure-connection'
+            backendAzureRmResourceGroupName: 'rg-terraform-backend'
+            backendAzureRmStorageAccountName: 'terraformbackendstate1'
+            backendAzureRmContainerName: 'tfstate-container'
+            backendAzureRmKey: 'dev.terraform.tfstate'
