@@ -5,9 +5,10 @@ terraform {
     container_name       = "terraform-tfstate-container"
     key                  = "dev.terraform.tfstate"
 
-    subscription_id = var.subscription_id
-    tenant_id 	= var.tenant_id
-    client_id 	= var.client_id
-    client_secret 	= var.client_secret
+    # These environment variables are passed in the Azure Pipeline
+    subscription_id = var.ARM_SUBSCRIPTION_ID
+    tenant_id 	= var.ARM_TENANT_ID
+    client_id 	= var.ARM_CLIENT_ID
+    client_secret 	= var.ARM_CLIENT_SECRET
   }
 }
