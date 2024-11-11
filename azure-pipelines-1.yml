@@ -67,47 +67,33 @@ stages:
             echo "Updated PATH: $env:PATH"  # Optional: Print the PATH to verify it's correct
           displayName: "Add Terraform path to environment variables"
 
+
         - task: TerraformTaskV4@4
           inputs:
             provider: 'azurerm'
             command: 'init'
-            workingDirectory: 'C:\terraform-code\' 
+            workingDirectory: 'C:\terraform-code\'
             backendServiceArm: 'devops-azure-connection'
             backendAzureRmResourceGroupName: 'rg-terraform'
             backendAzureRmStorageAccountName: 'strgtfstateterraform'
             backendAzureRmContainerName: 'terraform-tfstate-container'
-            backendAzureRmKey: 'dev.terraform.tfstate'
+            backendAzureRmKey: 'dev.terraform.tfvars'
 
         - task: TerraformTaskV4@4
           inputs:
             provider: 'azurerm'
             command: 'validate'
-            workingDirectory: 'C:\terraform-code\' 
-            backendServiceArm: 'devops-azure-connection'
-            backendAzureRmResourceGroupName: 'rg-terraform'
-            backendAzureRmStorageAccountName: 'strgtfstateterraform'
-            backendAzureRmContainerName: 'terraform-tfstate-container'
-            backendAzureRmKey: 'dev.terraform.tfstate'
 
         - task: TerraformTaskV4@4
           inputs:
             provider: 'azurerm'
             command: 'plan'
-            workingDirectory: 'C:\terraform-code\' 
-            backendServiceArm: 'devops-azure-connection'
-            backendAzureRmResourceGroupName: 'rg-terraform'
-            backendAzureRmStorageAccountName: 'strgtfstateterraform'
-            backendAzureRmContainerName: 'terraform-tfstate-container'
-            backendAzureRmKey: 'dev.terraform.tfstate'
+            environmentServiceNameAzureRM: 'devops-azure-connection'
 
         - task: TerraformTaskV4@4
           inputs:
             provider: 'azurerm'
             command: 'apply'
-            commandOptions: '--auto-approve'
-            workingDirectory: 'C:\terraform-code\' 
-            backendServiceArm: 'devops-azure-connection'
-            backendAzureRmResourceGroupName: 'rg-terraform'
-            backendAzureRmStorageAccountName: 'strgtfstateterraform'
-            backendAzureRmContainerName: 'terraform-tfstate-container'
-            backendAzureRmKey: 'dev.terraform.tfstate'
+            commandOptions: 'auto-approve'
+            environmentServiceNameAzureRM: 'devops-azure-connection'
+
