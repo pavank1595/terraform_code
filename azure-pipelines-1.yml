@@ -77,3 +77,37 @@ stages:
             backendAzureRmStorageAccountName: 'strgtfstateterraform'
             backendAzureRmContainerName: 'terraform-tfstate-container'
             backendAzureRmKey: 'dev.terraform.tfstate'
+
+        - task: TerraformTaskV4@4
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+            workingDirectory: 'C:\terraform-code\' 
+            backendServiceArm: 'devops-azure-connection'
+            backendAzureRmResourceGroupName: 'rg-terraform'
+            backendAzureRmStorageAccountName: 'strgtfstateterraform'
+            backendAzureRmContainerName: 'terraform-tfstate-container'
+            backendAzureRmKey: 'dev.terraform.tfstate'
+
+        - task: TerraformTaskV4@4
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: 'C:\terraform-code\' 
+            backendServiceArm: 'devops-azure-connection'
+            backendAzureRmResourceGroupName: 'rg-terraform'
+            backendAzureRmStorageAccountName: 'strgtfstateterraform'
+            backendAzureRmContainerName: 'terraform-tfstate-container'
+            backendAzureRmKey: 'dev.terraform.tfstate'
+
+        - task: TerraformTaskV4@4
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            commandOptions: '--auto-approve'
+            workingDirectory: 'C:\terraform-code\' 
+            backendServiceArm: 'devops-azure-connection'
+            backendAzureRmResourceGroupName: 'rg-terraform'
+            backendAzureRmStorageAccountName: 'strgtfstateterraform'
+            backendAzureRmContainerName: 'terraform-tfstate-container'
+            backendAzureRmKey: 'dev.terraform.tfstate'
