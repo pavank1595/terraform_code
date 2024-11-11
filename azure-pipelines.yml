@@ -1,0 +1,45 @@
+trigger: none
+
+pool:
+  name: "windowspool"
+  demands:
+    - Agent.Name -equals windowsagent
+
+variables:
+  ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+  ARM_TENANT_ID: $(ARM_TENANT_ID)
+  ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+  ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+
+
+stages:
+
+ # Stage 2: Get Terraform Code
+- stage: GetTerraformCode
+  displayName: "Get Terraform Code"
+  jobs:
+    - job: GetTerraformCode
+      displayName: "Get Terraform Code"
+      steps:
+        # Checkout the Terraform code from repository
+        - checkout: self
+
+        - task: CopyFiles@2
+          inputs:
+            SourceFolder: 'C:\vsts-agent-win-x64-3.246.0\_work\1\s'
+            Contents: '**/*'  # Copy all files in the directory
+            TargetFolder: 'C:\terraform-code'
+
+        # # Publish the Terraform code as an artifact for later use
+        # - task: PublishBuildArtifacts@1
+        #   inputs:
+        #     PathtoPublish: 'C:\vsts-agent-win-x64-3.246.0\_work\1\s'
+        #     ArtifactName: 'terraform-code'
+        
+        # # Download the Terraform code artifact for subsequent use
+        # - task: DownloadBuildArtifacts@1
+        #   inputs:
+        #     buildType: 'current'
+        #     downloadType: 'single'
+        #     artifactName: 'terraform-code'
+        #     downloadPath: 'C:\'
