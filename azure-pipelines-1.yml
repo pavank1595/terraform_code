@@ -77,7 +77,7 @@ stages:
             backendAzureRmResourceGroupName: 'rg-terraform'
             backendAzureRmStorageAccountName: 'strgtfstateterraform'
             backendAzureRmContainerName: 'terraform-tfstate-container'
-            backendAzureRmKey: 'dev.terraform.tfvars'
+            backendAzureRmKey: 'dev.terraform.tfstate'
 
         - task: TerraformTaskV4@4
           inputs:
