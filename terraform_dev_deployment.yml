@@ -6,15 +6,16 @@ pool:
     - Agent.Name -equals windowsagent
 
 variables:
-  ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
-  ARM_TENANT_ID: $(ARM_TENANT_ID)
-  ARM_CLIENT_ID: $(ARM_CLIENT_ID)
-  ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+  - group: 'Terraform-Details'
+  # ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+  # ARM_TENANT_ID: $(ARM_TENANT_ID)
+  # ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+  # ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
 
 
 stages:
 
- # Stage 2: Get Terraform Code
+# Stage 1: Get Terraform Code
 - stage: GetTerraformCode
   displayName: "Get Terraform Code"
   jobs:
@@ -30,21 +31,8 @@ stages:
             Contents: '**/*'  # Copy all files in the directory
             TargetFolder: 'C:\terraform-code'
 
-        # # Publish the Terraform code as an artifact for later use
-        # - task: PublishBuildArtifacts@1
-        #   inputs:
-        #     PathtoPublish: 'C:\vsts-agent-win-x64-3.246.0\_work\1\s'
-        #     ArtifactName: 'terraform-code'
-        
-        # # Download the Terraform code artifact for subsequent use
-        # - task: DownloadBuildArtifacts@1
-        #   inputs:
-        #     buildType: 'current'
-        #     downloadType: 'single'
-        #     artifactName: 'terraform-code'
-        #     downloadPath: 'C:\'
 
-# Stage 3: Run Terraform Init
+# Stage 2: Run Terraform Init
 - stage: RunTerraformCommands
   displayName: "Run Terraform Commands"
   jobs:
@@ -67,8 +55,8 @@ stages:
             echo "Updated PATH: $env:PATH"  # Optional: Print the PATH to verify it's correct
           displayName: "Add Terraform path to environment variables"
 
-
         - task: TerraformTaskV4@4
+          displayName: "terraform init"
           inputs:
             provider: 'azurerm'
             command: 'init'
@@ -80,12 +68,14 @@ stages:
             backendAzureRmKey: 'dev.terraform.tfstate'
 
         - task: TerraformTaskV4@4
+          displayName: "terraform validate"
           inputs:
             provider: 'azurerm'
             command: 'validate'
             workingDirectory: 'C:\terraform-code\'
 
         - task: TerraformTaskV4@4
+          displayName: "terraform plan"
           inputs:
             provider: 'azurerm'
             command: 'plan'
@@ -93,10 +83,11 @@ stages:
             environmentServiceNameAzureRM: 'devops-azure-connection'
 
         - task: TerraformTaskV4@4
+          displayName: "terraform apply"
           inputs:
             provider: 'azurerm'
             command: 'apply'
-            commandOptions: 'auto-approve'
+            commandOptions: '--auto-approve'
             workingDirectory: 'C:\terraform-code\'
             environmentServiceNameAzureRM: 'devops-azure-connection'
 
